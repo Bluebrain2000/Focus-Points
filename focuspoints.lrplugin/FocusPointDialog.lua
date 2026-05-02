@@ -89,23 +89,38 @@ end
 
 --[[----------------------------------------------------------------------------
   public table
-  createDialog(_photo, photoView, infoView, kbdShortcutInput)
+  createDialog(_photo, photoView, infoView, kbdShortcutInput, controlPanel)
 
-  Creates the view container for the entire dialog except the accessory view.
+  Creates the view container for the entire dialog.
+  When 'controlPanel' is provided (used in non-modal/floating dialog mode),
+  it is appended at the bottom of the layout, since floating dialogs do
+  not support the 'accessoryView' attribute that modal dialogs use.
 ------------------------------------------------------------------------------]]
-function FocusPointDialog.createDialog(_photo, photoView, infoView, kbdShortcutInput)
+function FocusPointDialog.createDialog(_photo, photoView, infoView, kbdShortcutInput, controlPanel)
   local f = LrView.osFactory()
 
+  -- Build the column children list. We assemble the table BEFORE creating the
+  -- view, because LR SDK view objects cannot be modified after construction.
+  local columnChildren = {
+    f:row {
+      kbdShortcutInput,
+    },
+    f:row {
+      f:column { photoView },
+      f:column { fill_vertical = 1, infoView },
+    },
+  }
+
+  if controlPanel then
+    -- In non-modal/floating dialog mode, the control panel (Prev/Next, tagging
+    -- buttons, links, etc.) is part of the contents, since floating dialogs do
+    -- not support the 'accessoryView' attribute used by modal dialogs.
+    table.insert(columnChildren, f:spacer { height = 8 })
+    table.insert(columnChildren, controlPanel)
+  end
+
   return f:view {
-    f:column {
-       f:row {
-         kbdShortcutInput,
-       },
-       f:row {
-         f:column { photoView },
-         f:column { fill_vertical = 1, infoView },
-       }
-    }
+    f:column(columnChildren),
   }
 end
 
