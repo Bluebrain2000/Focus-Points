@@ -1,5 +1,10 @@
 # Focus Points for Lightroom Classic
 
+This fork differs from the original version in the following ways:
+- not blocking the Lightroom UI when plugin window is shown
+- switching to another photo in the Lightroom Library reloads the plugin window with the new photo
+- loading dialog removed
+
 <img src="docs/images/ReadMe 1.jpg" alt="Screenshot" style="width: 800px;"/>
 
 A plugin for Lightroom Classic<sup>1</sup> on Windows and macOS: 
